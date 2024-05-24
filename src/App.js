@@ -12,10 +12,14 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Create from './pages/Create'
 import Post from './Context/PostContext';
 
+const MyCache = React.createContext(null)
+
+
 
 function App() {
   const {user, setUser} = useContext(AuthContext)
   const {firebase} = useContext(FirebaseContext)
+  const [cache, setCache] = useState(false)
 
   useEffect(()=>{
     const auth = getAuth();
@@ -30,7 +34,9 @@ function App() {
   })
   return (
     <div >
+      
       <Post>
+        <MyCache.Provider value={{cache, setCache}}>
         <Router>
           <Routes>
             <Route exact path='/' element={<Home/>}/>
@@ -40,9 +46,16 @@ function App() {
             <Route path='/view' element={<ViewPost/>}/>
           </Routes>
         </Router>
+        </MyCache.Provider>
       </Post>
+      
+      
+      
     </div>
   );
 }
 
 export default App;
+export {
+  MyCache
+}

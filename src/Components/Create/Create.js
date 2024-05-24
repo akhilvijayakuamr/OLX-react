@@ -13,37 +13,50 @@ const Create = () => {
   const [category, setCategory] = useState('')
   const [price, setPrice] = useState('')
   const [image, setImage] = useState(null)
+  const [msg, setMsg] = useState('')
   const navigate = useNavigate()
   const data = new Date()
 
+  const errorstyle = {
+    color:'red'
+  }
+
   const handleSumit = async (e) => {
     e.preventDefault()
-    console.log("hai")
-   
-    try {
-      const storage = getStorage();
-      const fileRef = ref(storage, `/image/${image.name}`);
-      await uploadBytes(fileRef, image);
-      console.log("hai")
-
-      const url = await getDownloadURL(fileRef);
-        const db = getFirestore();
-        console.log("hai2")
-        addDoc(collection(db, 'products'), {
-          name,
-          category,
-          price,
-          url,
-          userId:user.uid,
-          createdAt: data.toDateString()
-        }).then(()=>{
-          console.log("hai3")
-          navigate('/');
-        })
+    const na = name.trim()
+    const cat = category.trim()
+    const pr = price.trim()
+    setName(na)
+    setCategory(cat)
+    setPrice(pr)
+    if (name === '' || category === '' || price === ''){
+      setMsg("Please enter valid formate")
+    }
+    else{
+      try {
+        const storage = getStorage();
+        const fileRef = ref(storage, `/image/${image.name}`);
+        await uploadBytes(fileRef, image);
   
-   
-    } catch (error) {
-      console.error('Error uploading file:', error);
+        const url = await getDownloadURL(fileRef);
+          const db = getFirestore();
+          console.log("hai2")
+          addDoc(collection(db, 'products'), {
+            name,
+            category,
+            price,
+            url,
+            userId:user.uid,
+            createdAt: data.toDateString()
+          }).then(()=>{
+            setMsg('')
+            navigate('/');
+          })
+    
+     
+      } catch (error) {
+        console.error('Error uploading file:', error);
+      }
     }
   };
   return (
@@ -96,6 +109,13 @@ const Create = () => {
             />
             <br />
             <button onClick={handleSumit} className="uploadBtn">upload and Submit</button>
+
+            <br/>
+          
+          {
+            msg?<h6 style={errorstyle}>{msg}</h6>:<h6></h6>
+            
+          }
           </form>
         </div>
       </card>

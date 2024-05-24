@@ -1,33 +1,63 @@
-import React,{useState, useContext,} from 'react';
+import React,{useState, useContext, useEffect,} from 'react';
 import { FirebaseContext } from '../../Context/Context';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import Logo from '../../olx-logo.png';
 import {useNavigate} from 'react-router-dom'
 import './Login.css';
+import { MyCache } from '../../App';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [msg, setMsg] = useState('')
+  const [valid, setValid] = useState(true)
   const {firebase} = useContext(FirebaseContext)
+  const {cache, setCache} = useContext(MyCache)
   const navigate = useNavigate()
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  
+
+  const errorstyle = {
+    color:'red'
+  }
+
+  
+    
+
 
   const handleLogin =(e)=>{
     e.preventDefault()
-    const auth = getAuth();
-    signInWithEmailAndPassword(auth, email, password).then(()=>{
-      
-      navigate('/')
-    })
-    .then((userCredential) => {
-    // Signed in 
-    const user = userCredential.user;
-    // ...
-  })
-  .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
+    const ml = email.trim()
+    const ps = password.trim()
+    setEmail(ml)
+    setPassword(ps)
+    const vald = re.test(email)
+    setValid(vald)
 
-  });
+    if (email === '' || password === '' || valid === false){
+      setMsg("please enter proper email and password")
+      navigate('/login')
+    }
+    else{
+      
+      const auth = getAuth();
+      signInWithEmailAndPassword(auth, email, password).then(()=>{
+        setMsg('')
+        setCache(true)
+        navigate('/')
+      })
+      .then((userCredential) => {
+      // Signed in 
+      const user = userCredential.user;
+      // ...
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+  
+    });
+    }
+   
   }
 
   const navSign =()=>{
@@ -64,6 +94,14 @@ function Login() {
           <br />
           <br />
           <button>Login</button>
+
+          <br/>
+          
+          {
+            msg?<h6 style={errorstyle}>{msg}</h6>:<h6></h6>
+            
+          }
+
         </form>
         <a onClick={navSign}>Signup</a>
       </div>

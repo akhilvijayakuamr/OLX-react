@@ -9,14 +9,18 @@ import SellButtonPlus from '../../assets/SellButtonPlus';
 import { AuthContext, FirebaseContext } from '../../Context/Context';
 import { getAuth, signOut } from "firebase/auth";
 import {useNavigate} from "react-router-dom";
+import { MyCache } from '../../App';
 function Header() {
   const {user} =  useContext(AuthContext)
   const {firebase} = useContext(FirebaseContext)
+  const {cache, setCache} = useContext(MyCache)
   const navigate = useNavigate()
   const signout =()=>{
     const auth = getAuth();
     signOut(auth).then(() => {
+      setCache(false)
       navigate('/login')
+      
      // Sign-out successful.
     }).catch((error) => {
     // An error happened.
