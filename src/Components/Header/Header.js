@@ -19,6 +19,7 @@ function Header() {
     const auth = getAuth();
     signOut(auth).then(() => {
       setCache(false)
+      localStorage.removeItem('cache');
       navigate('/login')
       
      // Sign-out successful.

@@ -11,7 +11,10 @@ function LoginPage() {
   const {cache, setCache} = useContext(MyCache)
 
   useEffect(()=>{
-    console.log(cache)
+    const set = localStorage.getItem('cache');
+    if (set == "true"){
+      setCache(true)
+    }
     if(cache === true){
       navigate('/')
     }

@@ -44,6 +44,7 @@ function Login() {
       signInWithEmailAndPassword(auth, email, password).then(()=>{
         setMsg('')
         setCache(true)
+        localStorage.setItem('cache', 'true');
         navigate('/')
       })
       .then((userCredential) => {
